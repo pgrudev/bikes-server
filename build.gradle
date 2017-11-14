@@ -18,4 +18,5 @@ dependencies {
     compile "org.apache.logging.log4j:log4j-api:$log4j2Version"
     compile "org.apache.logging.log4j:log4j-core:$log4j2Version"
     compile "javax.inject:javax.inject:1"
+    compile "com.google.code.gson:gson:2.8.2"
 }

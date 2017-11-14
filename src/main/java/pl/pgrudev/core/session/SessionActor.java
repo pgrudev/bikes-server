@@ -6,6 +6,7 @@ import akka.actor.ActorSystem;
 import akka.dispatch.OnComplete;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import com.google.gson.Gson;
 import pl.pgrudev.client.Command;
 import scala.concurrent.Future;
 
@@ -20,17 +21,30 @@ public abstract class SessionActor extends AbstractActorWithStash {
         return system.actorFor("/user/" + session);
     }
 
+    private Gson gson;
+
+    public void preStart() throws Exception {
+        logger.debug("Actor starting");
+        this.gson = new Gson();
+        super.preStart();
+    }
+
+
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-                .match(Request.class, req -> response(handleRequest(req.getCommand())))
-                .match(Response.class, resp -> response(resp, true))
+               /* .match(Request.class, req -> response(handleRequest(req.getCommand())))
+                .match(Response.class, resp -> response(resp, true))*/
+               .match(String.class, msg -> {
+                Request request = gson.fromJson(msg, Request.class);
+                handleRequest(request);
+               })
                 .build();
     }
 
-    private Future<Object[]> handleRequest(final Command cmd ) {
+    private Future<Object[]> handleRequest(final Request request) {
         //api calls go here
-
+        System.out.println("Handling request:" + request);
         return null;
     }
 
