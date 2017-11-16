@@ -23,28 +23,34 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
+import org.springframework.stereotype.Service;
 import pl.pgrudev.core.netty.HttpRequestHandler;
 import pl.pgrudev.core.netty.WebSocketFrameHandler;
 
 import javax.inject.Inject;
 import java.util.Locale;
 
+@Service
 public final class WebsocketGateway {
 
     private static final Logger logger = LogManager.getLogger(WebsocketGateway.class);
     private final static String osName = SystemPropertyUtil.get("os.name").toLowerCase(Locale.UK).trim();
     private final static boolean linux = osName.startsWith("linux");
 
-    @Value("$core.websocket.path:/BikeServer")
+    //@Value("${core.websocket.path} ?: /BikeServer")
+    @Value("/BikeServer")
     private String path;
 
-    @Value("$core.websocket.port:8090")
+    //@Value("${core.websocket.port} ?: 8090")
+    @Value("8090")
     private int port;
 
-    @Value("$core.websocket.maxframesize:65536")
+    //@Value("${core.websocket.maxframesize} ?: 65536")
+    @Value("65536")
     private int maxFrame;
 
-    @Value("$core.websocket.ssl:false")
+    //@Value("${core.websocket.ssl} ?: false")
+    @Value("false")
     private boolean ssl;
 
     @Inject
@@ -52,7 +58,6 @@ public final class WebsocketGateway {
 
     @Inject
     private ActorSystem actorSystem;
-
 
     private EventLoopGroup parentGroup;
     private EventLoopGroup childGroup;
