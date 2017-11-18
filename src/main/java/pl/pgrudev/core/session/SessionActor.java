@@ -47,12 +47,18 @@ public abstract class SessionActor extends AbstractActorWithStash {
                     logger.info("Received message: " + msg);
                     try {
                         Request request = gson.fromJson(msg, Request.class);
-                        ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toString()));
+                        Response response = createResponse(request);
+                        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
                     }
                 })
                 .build();
+    }
+
+    private Response createResponse(Request request) {
+        String[] response = new String[]{"Request was sent by", this.getSelf().toString()};
+        return new Response(request, response, null);
     }
 
     public abstract Future<Object[]> handleRequest(final Request request);
