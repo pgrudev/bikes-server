@@ -8,10 +8,14 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.context.annotation.Scope;
 import pl.pgrudev.core.session.SessionActor;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
+@Named("WebSocketFrameHandler")
+@Scope("prototype")
 public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocketFrame> {
     private static final Logger logger = LogManager.getLogger(WebSocketFrameHandler.class);
 

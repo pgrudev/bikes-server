@@ -24,4 +24,11 @@ public class Request {
         this.args = args;
     }
 
+    @Override
+    public String toString() {
+        return "Request{" +
+                "command=" + command +
+                ", args=" + args +
+                '}';
+    }
 }

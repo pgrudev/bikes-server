@@ -11,11 +11,13 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.util.List;
 import java.util.Optional;
 
 import static pl.pgrudev.core.spring.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
+@Named("HttpRequestHandler")
 @Scope("prototype")
 public class HttpRequestHandler extends MessageToMessageDecoder<FullHttpRequest> {
     private static final Logger logger = LogManager.getLogger(HttpRequestHandler.class);
@@ -29,9 +31,9 @@ public class HttpRequestHandler extends MessageToMessageDecoder<FullHttpRequest>
             String addr = Optional.ofNullable(msg.headers().get("x-forwarded-for")).orElse(ctx.channel().remoteAddress().toString());
 
             ctx.channel().attr(IPAddress).set(addr);
-            System.out.println(ctx.channel().attr(HttpRequestHandler.IPAddress));
+            logger.info(ctx.channel().attr(HttpRequestHandler.IPAddress));
             logger.debug("Channel registered: New SessionActor starting in context {}", ctx);
-            ActorRef ref = actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem).props("websocketSessionActor",ctx).withDispatcher("cpeer-dispatcher"),
+            ActorRef ref = actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem).props("WebsocketSessionActor", ctx),
                     ctx.channel().id().asShortText());
 
         } catch (Exception e) {

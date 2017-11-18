@@ -115,7 +115,7 @@ public final class WebsocketGateway {
                         pipeline.addLast(new HttpServerCodec());
                         pipeline.addLast(new HttpObjectAggregator(65536));
 
-                        pipeline.addLast(beanFactory.getBean("FullHttpRequestHandler", HttpRequestHandler.class));
+                        pipeline.addLast(beanFactory.getBean("HttpRequestHandler", HttpRequestHandler.class));
 
                         pipeline.addLast(new WebSocketServerCompressionHandler());
                         pipeline.addLast(new WebSocketFrameAggregator(maxFrame));

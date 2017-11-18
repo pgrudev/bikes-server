@@ -7,12 +7,18 @@ import akka.dispatch.OnComplete;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.google.gson.Gson;
-import pl.pgrudev.client.Command;
+import com.google.gson.JsonSyntaxException;
+import com.sun.org.apache.regexp.internal.RE;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.internal.tcnative.Buffer;
+import org.springframework.context.annotation.Scope;
 import scala.concurrent.Future;
 
 import javax.inject.Named;
 
-@Named
+@Named("SessionActor")
 public abstract class SessionActor extends AbstractActorWithStash {
 
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this);
@@ -21,32 +27,35 @@ public abstract class SessionActor extends AbstractActorWithStash {
         return system.actorFor("/user/" + session);
     }
 
-    private Gson gson;
+    private ChannelHandlerContext ctx;
 
+    public SessionActor(ChannelHandlerContext ctx) {
+        this.ctx = ctx;
+    }
+
+    private Gson gson;
     public void preStart() throws Exception {
         logger.debug("Actor starting");
         this.gson = new Gson();
         super.preStart();
     }
 
-
     @Override
     public Receive createReceive() {
         return receiveBuilder()
-               /* .match(Request.class, req -> response(handleRequest(req.getCommand())))
-                .match(Response.class, resp -> response(resp, true))*/
-               .match(String.class, msg -> {
-                Request request = gson.fromJson(msg, Request.class);
-                handleRequest(request);
-               })
+                .match(String.class, msg -> {
+                    logger.info("Received message: " + msg);
+                    try {
+                        Request request = gson.fromJson(msg, Request.class);
+                        ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toString()));
+                    } catch (JsonSyntaxException e) {
+                        logger.warning("Error in parsing message: " + msg);
+                    }
+                })
                 .build();
     }
 
-    private Future<Object[]> handleRequest(final Request request) {
-        //api calls go here
-        System.out.println("Handling request:" + request);
-        return null;
-    }
+    public abstract Future<Object[]> handleRequest(final Request request);
 
     private void response(Future<Object[]> response) {
         response(response, null);
@@ -68,12 +77,12 @@ public abstract class SessionActor extends AbstractActorWithStash {
     }
 
 
-    public void response(Object[] response, Request req, boolean completed) throws Exception{
+    public void response(Object[] response, Request req, boolean completed) throws Exception {
         //create new Response object and send
     }
 
 
     private void response(Response resp, boolean completed) throws Exception {
-            response(resp.getResponse(), resp.getRequest(), completed);
+        response(resp.getResponse(), resp.getRequest(), completed);
     }
 }
