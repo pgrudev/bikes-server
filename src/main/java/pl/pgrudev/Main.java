@@ -1,5 +1,6 @@
 package pl.pgrudev;
 
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
@@ -8,6 +9,7 @@ import pl.pgrudev.core.WebsocketGateway;
 
 @Configuration
 @ComponentScan
+@EnableAutoConfiguration
 public class Main {
     public static void main(String[] args) {
         ApplicationContext ctx = new AnnotationConfigApplicationContext(Main.class);

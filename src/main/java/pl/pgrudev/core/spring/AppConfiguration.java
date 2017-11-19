@@ -21,4 +21,10 @@ public class AppConfiguration {
         SPRING_EXTENSION_PROVIDER.get(system).initialize(applicationContext);
         return system;
     }
+/*
+    @Bean
+    @ConditionalOnMissingBean(CustomConversions.class)
+    public CustomConversions customConversions(){
+        return new CustomConversions(null);
+    }*/
 }

@@ -65,9 +65,9 @@ public final class WebsocketGateway {
     public void start() throws InterruptedException {
         try {
             ChannelFuture f1 = startServer();
-            ChannelFuture f2 = startTestServer();
+         //   ChannelFuture f2 = startTestServer();
             f1.sync();
-            f2.sync();
+           // f2.sync();
         } catch (Exception e) {
             logger.error("Could not start server", e);
         } finally {

@@ -8,13 +8,13 @@ import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
-import com.sun.org.apache.regexp.internal.RE;
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.internal.tcnative.Buffer;
-import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.annotation.Autowired;
+import pl.pgrudev.client.User;
+import pl.pgrudev.repository.CustomerRepository;
 import scala.concurrent.Future;
+import sun.rmi.runtime.Log;
 
 import javax.inject.Named;
 
@@ -22,18 +22,20 @@ import javax.inject.Named;
 public abstract class SessionActor extends AbstractActorWithStash {
 
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this);
-
-    public static ActorRef getSession(ActorSystem system, String session) {
-        return system.actorFor("/user/" + session);
-    }
-
     private ChannelHandlerContext ctx;
+    private Gson gson;
+
+    @Autowired
+    private CustomerRepository repository;
 
     public SessionActor(ChannelHandlerContext ctx) {
         this.ctx = ctx;
     }
 
-    private Gson gson;
+    public static ActorRef getSession(ActorSystem system, String session) {
+        return system.actorFor("/user/" + session);
+    }
+
     public void preStart() throws Exception {
         logger.debug("Actor starting");
         this.gson = new Gson();
@@ -48,17 +50,13 @@ public abstract class SessionActor extends AbstractActorWithStash {
                     try {
                         Request request = gson.fromJson(msg, Request.class);
                         Response response = createResponse(request);
-                        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
+                        send(response);
+                        newFeature();
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
                     }
                 })
                 .build();
-    }
-
-    private Response createResponse(Request request) {
-        String[] response = new String[]{"Request was sent by", this.getSelf().toString()};
-        return new Response(request, response, null);
     }
 
     public abstract Future<Object[]> handleRequest(final Request request);
@@ -82,13 +80,36 @@ public abstract class SessionActor extends AbstractActorWithStash {
         }, context().dispatcher());
     }
 
-
-    public void response(Object[] response, Request req, boolean completed) throws Exception {
-        //create new Response object and send
+    private Response createResponse(Request request) {
+        String[] response = new String[]{"Request was sent by", this.getSelf().toString()};
+        return new Response(request, response, null);
     }
 
+    public void response(Request req, Object[] response, boolean completed) throws Exception {
+        send(createResponse(req));
+    }
 
     private void response(Response resp, boolean completed) throws Exception {
-        response(resp.getResponse(), resp.getRequest(), completed);
+        response(resp.getRequest(), resp.getResponse(), completed);
+    }
+
+    private void send(Response response) {
+        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
+    }
+
+    private void newFeature(){
+        String all ="All users: ";
+        logger.debug(all);
+        repository.findAll().stream().map(User::toString).forEach(logger::debug);
+        repository.insert(new User("Paweł", "Grudzień"));
+
+        logger.debug(all);
+        repository.findAll().stream().map(User::toString).forEach(logger::debug);
+
+      /*  logger.info(repository.findByFirstName("Paweł").toString());
+        repository.delete(repository.findByFirstName("Paweł"));*/
+     //   repository.deleteAll();
+        System.out.println("All users: ");
+        repository.findAll().stream().map(User::toString).forEach(logger::debug);
     }
 }
