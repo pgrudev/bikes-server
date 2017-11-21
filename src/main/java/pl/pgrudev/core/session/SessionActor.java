@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import pl.pgrudev.client.User;
 import pl.pgrudev.repository.CustomerRepository;
 import scala.concurrent.Future;
-import sun.rmi.runtime.Log;
 
 import javax.inject.Named;
 
@@ -36,6 +35,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
         return system.actorFor("/user/" + session);
     }
 
+    @Override
     public void preStart() throws Exception {
         logger.debug("Actor starting");
         this.gson = new Gson();
@@ -59,7 +59,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
                 .build();
     }
 
-    public abstract Future<Object[]> handleRequest(final Request request);
+    public abstract Future<Object> handleRequest(final Request request);
 
     private void response(Future<Object[]> response) {
         response(response, null);
@@ -85,7 +85,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
         return new Response(request, response, null);
     }
 
-    public void response(Request req, Object[] response, boolean completed) throws Exception {
+    public void response(Request req, Object response, boolean completed) throws Exception {
         send(createResponse(req));
     }
 
@@ -93,7 +93,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
         response(resp.getRequest(), resp.getResponse(), completed);
     }
 
-    private void send(Response response) {
+    public void send(Response response) {
         ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 

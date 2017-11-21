@@ -1,17 +1,41 @@
 package pl.pgrudev.core.netty;
 
+import akka.dispatch.Futures;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.annotation.Scope;
+import pl.pgrudev.core.api.ClientApi;
 import pl.pgrudev.core.session.Request;
+import pl.pgrudev.core.session.Response;
 import pl.pgrudev.core.session.SessionActor;
 import scala.concurrent.Future;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 @Named("WebsocketSessionActor")
 @Scope("prototype")
 public class WebSocketSessionActor extends SessionActor {
+    private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this);
+
     private ChannelHandlerContext ctx;
+    private Gson gson;
+    @Inject
+    private ClientApi clientApi;
+    @Inject
+    private List<String> loginNotRequired;
+    private Map<String, Method> methodsMap;
+
 
     public WebSocketSessionActor(ChannelHandlerContext ctx) {
         super(ctx);
@@ -19,15 +43,77 @@ public class WebSocketSessionActor extends SessionActor {
     }
 
     @Override
+    public void preStart() throws Exception {
+        logger.debug("Actor starting");
+        this.gson = new Gson();
+        //todo make this global, not per session:
+        Set<Method> declaredMethods = Arrays.stream(clientApi.getClass().getDeclaredMethods()).collect(Collectors.toSet());
+        this.methodsMap = declaredMethods.stream().collect(Collectors.toMap(Method::getName, method -> method));
+        super.preStart();
+    }
+
+    @Override
+    public Receive createReceive() {
+        return receiveBuilder()
+                .match(String.class, msg -> {
+                    logger.info("Received message: " + msg);
+                    try {
+                        Request request = gson.fromJson(msg, Request.class);
+                        handleRequest(request);
+
+
+                    } catch (JsonSyntaxException e) {
+                        logger.warning("Error in parsing message: " + msg);
+                    }
+                })
+                .build();
+    }
+
+    @Override
+    public Future<Object> handleRequest(final Request request){
+        if(request == null){
+            return Futures.failed(new IllegalArgumentException("Request empty"));
+        }
+
+        if(!clientApi.isLogged() && !loginNotRequired.contains(request.getCommand().getCmd())){
+            return Futures.failed(new IllegalAccessError("User not logged in"));
+        }
+
+        return callApi(request);
+    }
+
+    private Future<Object> callApi(Request request) {
+        Method method = methodsMap.get(request.getCommand().getCmd());
+        Callable<Object> call = () -> {
+            try {
+                return method.invoke(request.getArgs());
+            }catch(Exception e ){
+                logger.error("Invocation Target Exception - calling api",e);
+                throw e;
+            }
+        };
+        return Futures.future(call, getContext().dispatcher());
+    }
+
+
+    @Override
+    public void response(Request req, Object response, boolean completed) {
+        send(createResponse(req));
+    }
+
+    @Override
+    public void send(Response response) {
+        super.send(response);
+    }
+
+    private Response createResponse(Request request) {
+        String[] response = new String[]{"Request was sent by", this.getSelf().toString()};
+        return new Response(request, response, null);
+    }
+
+    @Override
     public void postStop() {
         ctx.close();
         super.postStop();
     }
-
-    @Override
-    public Future<Object[]> handleRequest(final Request request){
-        return null;
-    }
-
-
 }
