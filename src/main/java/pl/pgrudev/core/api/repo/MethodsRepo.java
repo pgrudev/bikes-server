@@ -8,17 +8,14 @@ import pl.pgrudev.core.api.PublicApi;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Named
 public class MethodsRepo {
     private final static Logger logger = LogManager.getLogger(MethodsRepo.class);
     private Set<Class<?>> publicApis;
-    private Map<Class, Map<String, Object>> ultimateInterfacesVsMethodsMap;
+    private Map<Class, Map<String, Method>> ultimateInterfacesVsMethodsMap = new HashMap<>();
 
     @PostConstruct
     public void init() {
@@ -30,7 +27,7 @@ public class MethodsRepo {
             for (BeanDefinition bd : annotationInterfacesScanner.findCandidateComponents("pl.pgrudev")) {
                 Class clazz = Class.forName(bd.getBeanClassName());
                 publicApis.add(clazz);
-                Map<String, Object> methodsMap = Arrays.stream(clazz.getClass().getDeclaredMethods()).collect(Collectors.toMap(Method::getName, method -> method));
+                Map<String, Method> methodsMap = Arrays.stream(clazz.getDeclaredMethods()).collect(Collectors.toMap(Method::getName, method -> method));
                 ultimateInterfacesVsMethodsMap.put(clazz, methodsMap);
             }
 
@@ -40,12 +37,16 @@ public class MethodsRepo {
     }
 
 
-    public Map<Class, Map<String, Object>> getUltimateInterfacesVsMethodsMap() {
+    public Map<Class, Map<String, Method>> getUltimateInterfacesVsMethodsMap() {
         return ultimateInterfacesVsMethodsMap;
     }
 
-    public void setUltimateInterfacesVsMethodsMap(Map<Class, Map<String, Object>> ultimateInterfacesVsMethodsMap) {
+    public void setUltimateInterfacesVsMethodsMap(Map<Class, Map<String, Method>> ultimateInterfacesVsMethodsMap) {
         this.ultimateInterfacesVsMethodsMap = ultimateInterfacesVsMethodsMap;
+    }
+
+    public Map<String, Method> getMethodsMap(Class api){
+        return ultimateInterfacesVsMethodsMap.get(api);
     }
 
     public Set<Class<?>> getPublicApis() {

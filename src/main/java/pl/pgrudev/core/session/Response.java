@@ -11,6 +11,11 @@ public class Response {
         this.response = response;
     }
 
+   /* public Response(Request request, ){
+        this.response = request;
+        this.response =
+    }
+*/
     public Request getRequest() {
         return request;
     }

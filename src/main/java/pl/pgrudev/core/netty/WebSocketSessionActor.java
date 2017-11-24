@@ -8,6 +8,8 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.annotation.Scope;
 import pl.pgrudev.core.api.ClientApi;
+import pl.pgrudev.core.api.ClientApiImpl;
+import pl.pgrudev.core.api.repo.MethodsRepo;
 import pl.pgrudev.core.session.Request;
 import pl.pgrudev.core.session.Response;
 import pl.pgrudev.core.session.SessionActor;
@@ -16,12 +18,8 @@ import scala.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.stream.Collectors;
 
 @Named("WebsocketSessionActor")
 @Scope("prototype")
@@ -31,9 +29,11 @@ public class WebSocketSessionActor extends SessionActor {
     private ChannelHandlerContext ctx;
     private Gson gson;
     @Inject
-    private ClientApi clientApi;
+    private ClientApi clientApiImpl;
+    /*@Inject
+    private List<String> loginNotRequired;*/
     @Inject
-    private List<String> loginNotRequired;
+    private MethodsRepo methodsRepo;
     private Map<String, Method> methodsMap;
 
 
@@ -46,9 +46,7 @@ public class WebSocketSessionActor extends SessionActor {
     public void preStart() throws Exception {
         logger.debug("Actor starting");
         this.gson = new Gson();
-        //todo make this global, not per session:
-        Set<Method> declaredMethods = Arrays.stream(clientApi.getClass().getDeclaredMethods()).collect(Collectors.toSet());
-        this.methodsMap = declaredMethods.stream().collect(Collectors.toMap(Method::getName, method -> method));
+        this.methodsMap = methodsRepo.getMethodsMap(ClientApi.class);
         super.preStart();
     }
 
@@ -60,8 +58,6 @@ public class WebSocketSessionActor extends SessionActor {
                     try {
                         Request request = gson.fromJson(msg, Request.class);
                         handleRequest(request);
-
-
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
                     }
@@ -75,9 +71,9 @@ public class WebSocketSessionActor extends SessionActor {
             return Futures.failed(new IllegalArgumentException("Request empty"));
         }
 
-        if(!clientApi.isLogged() && !loginNotRequired.contains(request.getCommand().getCmd())){
+    /*    if(!clientApiImpl.isLogged() && !loginNotRequired.contains(request.getCommand().getCmd())){
             return Futures.failed(new IllegalAccessError("User not logged in"));
-        }
+        }*/
 
         return callApi(request);
     }
@@ -86,9 +82,12 @@ public class WebSocketSessionActor extends SessionActor {
         Method method = methodsMap.get(request.getCommand().getCmd());
         Callable<Object> call = () -> {
             try {
-                return method.invoke(request.getArgs());
-            }catch(Exception e ){
-                logger.error("Invocation Target Exception - calling api",e);
+                if (null != request.getArgs()) {
+                    return method.invoke(ClientApiImpl.class.newInstance(), request.getArgs());
+                }
+                return method.invoke(ClientApiImpl.class.newInstance());
+            } catch (Exception e) {
+                logger.error("Invocation Target Exception - calling api", e);
                 throw e;
             }
         };

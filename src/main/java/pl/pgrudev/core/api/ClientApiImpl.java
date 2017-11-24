@@ -2,8 +2,10 @@ package pl.pgrudev.core.api;
 
 import pl.pgrudev.core.session.Response;
 
+import javax.inject.Named;
 import java.util.List;
 
+@Named
 public class ClientApiImpl implements ClientApi {
     @Override
     public Response login(String login, String password) {
@@ -16,9 +18,10 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public Response ping() {
-        return null;
+    public String ping() {
+        return "pong";
     }
+
 
     @Override
     public Response getStation(int stationId) {
