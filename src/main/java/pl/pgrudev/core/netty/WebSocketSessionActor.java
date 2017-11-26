@@ -1,6 +1,8 @@
 package pl.pgrudev.core.netty;
 
+import akka.actor.ActorRef;
 import akka.dispatch.Futures;
+import akka.dispatch.OnComplete;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
 import com.google.gson.Gson;
@@ -57,17 +59,18 @@ public class WebSocketSessionActor extends SessionActor {
                     logger.info("Received message: " + msg);
                     try {
                         Request request = gson.fromJson(msg, Request.class);
-                        handleRequest(request);
+                        response(handleRequest(request), request);
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
                     }
                 })
+                .match(Response.class, this::send)
                 .build();
     }
 
     @Override
-    public Future<Object> handleRequest(final Request request){
-        if(request == null){
+    public Future<Object> handleRequest(final Request request) {
+        if (request == null) {
             return Futures.failed(new IllegalArgumentException("Request empty"));
         }
 
@@ -92,6 +95,21 @@ public class WebSocketSessionActor extends SessionActor {
             }
         };
         return Futures.future(call, getContext().dispatcher());
+    }
+
+    private void response(Future<Object> response, final Request req) {
+
+        final ActorRef self = getSelf();
+        final ActorRef sender = getSender();
+
+        response.onComplete(new OnComplete<Object>() {
+
+            @Override
+            public void onComplete(Throwable failure, Object response) throws Throwable {
+                self.tell(new Response(req, response, failure), sender);
+            }
+
+        }, context().dispatcher());
     }
 
 

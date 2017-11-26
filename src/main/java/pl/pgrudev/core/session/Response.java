@@ -3,9 +3,9 @@ package pl.pgrudev.core.session;
 public class Response {
     private final Request request;
     private final Throwable failure;
-    private final Object[] response;
+    private final Object response;
 
-    public Response(Request req, Object[] response, Throwable failure) {
+    public Response(Request req, Object response, Throwable failure) {
         this.request = req;
         this.failure = failure;
         this.response = response;
@@ -24,7 +24,7 @@ public class Response {
         return failure;
     }
 
-    public Object[] getResponse(){
+   /* public Object[] getResponse(){
         return response.clone();
-    }
+    }*/
 }

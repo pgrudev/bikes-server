@@ -90,7 +90,8 @@ public abstract class SessionActor extends AbstractActorWithStash {
     }
 
     private void response(Response resp, boolean completed) throws Exception {
-        response(resp.getRequest(), resp.getResponse(), completed);
+       // response(resp.getRequest(), resp.getResponse(), completed);
+        return;
     }
 
     public void send(Response response) {
