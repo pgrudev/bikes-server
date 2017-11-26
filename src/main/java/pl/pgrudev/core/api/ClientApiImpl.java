@@ -1,6 +1,9 @@
 package pl.pgrudev.core.api;
 
-import pl.pgrudev.core.session.Response;
+import pl.pgrudev.client.User;
+import pl.pgrudev.nextbike.model.Station;
+import pl.pgrudev.nextbike.model.StationDictionary;
+import pl.pgrudev.nextbike.model.Stats;
 
 import javax.inject.Named;
 import java.util.List;
@@ -8,53 +11,47 @@ import java.util.List;
 @Named
 public class ClientApiImpl implements ClientApi {
     @Override
-    public Response login(String login, String password) {
+    public String login(String login, String password) {
         return null;
     }
 
     @Override
-    public Response logout() {
+    public String logout() {
         return null;
     }
 
     @Override
-    public Response ping() {
-        return new Response("pong");
-    }
-
-
-    @Override
-    public Response getStation(int stationId) {
+    public Station getStation(int stationId) {
         return null;
     }
 
     @Override
-    public Response getStations(List<Integer> stationsId) {
+    public List<Station> getStations(List<Integer> stationsId) {
         return null;
     }
 
     @Override
-    public Response getStationsDictionary() {
+    public StationDictionary getStationsDictionary() {
         return null;
     }
 
     @Override
-    public Response addFavouriteStation(int stationId) {
+    public String addFavouriteStation(int stationId) {
         return null;
     }
 
     @Override
-    public Response removeFavouriteStation(int stationId) {
+    public String removeFavouriteStation(int stationId) {
         return null;
     }
 
     @Override
-    public Response getUserInfo() {
+    public User getUserInfo() {
         return null;
     }
 
     @Override
-    public Response teaserStats() {
+    public Stats teaserStats() {
         return null;
     }
 

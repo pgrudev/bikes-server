@@ -1,8 +1,11 @@
 package pl.pgrudev.core.api;
 
+import pl.pgrudev.client.User;
 import pl.pgrudev.core.api.annotations.LoginNotRequired;
 import pl.pgrudev.core.api.annotations.PublicApi;
-import pl.pgrudev.core.session.Response;
+import pl.pgrudev.nextbike.model.Station;
+import pl.pgrudev.nextbike.model.StationDictionary;
+import pl.pgrudev.nextbike.model.Stats;
 
 import javax.inject.Named;
 import java.util.List;
@@ -10,26 +13,28 @@ import java.util.List;
 @PublicApi
 @Named
 public interface ClientApi {
-    public Response login(String login, String password);
+    String login(String login, String password);
 
-    public Response logout();
+    String logout();
 
     @LoginNotRequired
-    public Response ping();
+    default String ping(){
+        return "pong";
+    }
 
-    public Response getStation(int stationId);
+    Station getStation(int stationId);
 
-    public Response getStations(List<Integer> stationsId);
+    List<Station> getStations(List<Integer> stationsId);
 
-    public Response getStationsDictionary();
+    StationDictionary getStationsDictionary();
 
-    public Response addFavouriteStation(int stationId);
+    String addFavouriteStation(int stationId);
 
-    public Response removeFavouriteStation(int stationId);
+    String removeFavouriteStation(int stationId);
 
-    public Response getUserInfo();
+    User getUserInfo();
 
-    public Response teaserStats();
+    Stats teaserStats();
 
     @LoginNotRequired
     public boolean isLogged();

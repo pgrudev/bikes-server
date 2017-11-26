@@ -76,14 +76,25 @@ public class WebSocketSessionActor extends SessionActor {
             return Futures.failed(new IllegalArgumentException("Request empty"));
         }
 
-        if (!isLoggedIn() && isLoginRequired(request)){
+        if (!isLoggedIn() && isLoginRequired(request)) {
             return Futures.failed(new IllegalAccessError("User not logged in"));
         }
 
-        return callApi(request);
+        if (isUserEligible()) {
+            return callApi(request);
+        } else {
+            return Futures.failed(new IllegalAccessError("User not eligible"));
+        }
+
+    }
+
+    private boolean isUserEligible() {
+        //todo implement
+        return true;
     }
 
     private boolean isLoggedIn() {
+        //todo implement
         return false;
     }
 
