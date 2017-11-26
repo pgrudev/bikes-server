@@ -18,8 +18,8 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public String ping() {
-        return "pong";
+    public Response ping() {
+        return new Response("pong");
     }
 
 

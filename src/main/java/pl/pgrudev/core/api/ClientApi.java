@@ -1,5 +1,7 @@
 package pl.pgrudev.core.api;
 
+import pl.pgrudev.core.api.annotations.LoginNotRequired;
+import pl.pgrudev.core.api.annotations.PublicApi;
 import pl.pgrudev.core.session.Response;
 
 import javax.inject.Named;
@@ -12,7 +14,8 @@ public interface ClientApi {
 
     public Response logout();
 
-    public String ping();
+    @LoginNotRequired
+    public Response ping();
 
     public Response getStation(int stationId);
 
@@ -28,5 +31,6 @@ public interface ClientApi {
 
     public Response teaserStats();
 
+    @LoginNotRequired
     public boolean isLogged();
 }

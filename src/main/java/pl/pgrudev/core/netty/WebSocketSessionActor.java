@@ -20,8 +20,10 @@ import scala.concurrent.Future;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
 @Named("WebsocketSessionActor")
 @Scope("prototype")
@@ -32,8 +34,7 @@ public class WebSocketSessionActor extends SessionActor {
     private Gson gson;
     @Inject
     private ClientApi clientApiImpl;
-    /*@Inject
-    private List<String> loginNotRequired;*/
+    private List<String> loginNotRequired;
     @Inject
     private MethodsRepo methodsRepo;
     private Map<String, Method> methodsMap;
@@ -49,6 +50,7 @@ public class WebSocketSessionActor extends SessionActor {
         logger.debug("Actor starting");
         this.gson = new Gson();
         this.methodsMap = methodsRepo.getMethodsMap(ClientApi.class);
+        this.loginNotRequired = methodsRepo.getLoginNotRequiredCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
         super.preStart();
     }
 
@@ -74,11 +76,19 @@ public class WebSocketSessionActor extends SessionActor {
             return Futures.failed(new IllegalArgumentException("Request empty"));
         }
 
-    /*    if(!clientApiImpl.isLogged() && !loginNotRequired.contains(request.getCommand().getCmd())){
+        if (!isLoggedIn() && isLoginRequired(request)){
             return Futures.failed(new IllegalAccessError("User not logged in"));
-        }*/
+        }
 
         return callApi(request);
+    }
+
+    private boolean isLoggedIn() {
+        return false;
+    }
+
+    private boolean isLoginRequired(Request request) {
+        return !loginNotRequired.contains(request.getCommand().getCmd());
     }
 
     private Future<Object> callApi(Request request) {
