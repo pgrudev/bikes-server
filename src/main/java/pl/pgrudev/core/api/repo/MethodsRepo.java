@@ -3,7 +3,7 @@ package pl.pgrudev.core.api.repo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.BeanDefinition;
-import pl.pgrudev.core.api.ClientApi;
+import pl.pgrudev.core.api.annotations.AdminCommand;
 import pl.pgrudev.core.api.annotations.LoginNotRequired;
 import pl.pgrudev.core.api.annotations.PublicApi;
 
@@ -19,12 +19,14 @@ public class MethodsRepo {
     private Set<Class<?>> publicApis;
     private Map<Class, Map<String, Method>> ultimateInterfacesVsMethodsMap = new HashMap<>();
     private Map<Class, List<Method>> loginNotRequiredCommands = new HashMap<>();
+    private Map<Class, List<Method>> adminOnlyCommands = new HashMap<>();
 
     @PostConstruct
     public void init() {
         try {
             findPublicApis();
-            publicApis.forEach(this::findLoginNotRequired);
+            publicApis.forEach(this::findLoginNotRequiredCommands);
+            publicApis.forEach(this::findAdminOnlyCommands);
         } catch (ClassNotFoundException e) {
             logger.error(e);
         }
@@ -41,11 +43,18 @@ public class MethodsRepo {
         }
     }
 
-    private void findLoginNotRequired(Class<?> publicApi) {
+    private void findLoginNotRequiredCommands(Class<?> publicApi) {
         List<Method> methods = Arrays.stream(publicApi.getDeclaredMethods())
                 .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(annotation -> LoginNotRequired.class.isAssignableFrom(annotation.annotationType())))
                 .collect(Collectors.toList());
         this.loginNotRequiredCommands.put(publicApi, methods);
+    }
+
+    private void findAdminOnlyCommands(Class<?> publicApi) {
+        List<Method> methods = Arrays.stream(publicApi.getDeclaredMethods())
+                .filter(method -> Arrays.stream(method.getAnnotations()).anyMatch(annotation -> AdminCommand.class.isAssignableFrom(annotation.annotationType())))
+                .collect(Collectors.toList());
+        this.adminOnlyCommands.put(publicApi, methods);
     }
 
 
@@ -69,7 +78,11 @@ public class MethodsRepo {
         this.publicApis = publicApis;
     }
 
-    public List<Method> getLoginNotRequiredCommands(Class<ClientApi> clientApiClass) {
-        return this.loginNotRequiredCommands.get(clientApiClass);
+    public List<Method> getLoginNotRequiredCommands(Class<?> publicApi) {
+        return this.loginNotRequiredCommands.get(publicApi);
+    }
+
+    public List<Method> getAdminOnlyCommands(Class<?> publicApi) {
+        return this.adminOnlyCommands.get(publicApi);
     }
 }

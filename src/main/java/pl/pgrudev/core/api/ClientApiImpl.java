@@ -1,23 +1,31 @@
 package pl.pgrudev.core.api;
 
+import akka.actor.PoisonPill;
 import pl.pgrudev.client.User;
+import pl.pgrudev.core.session.SessionActor;
 import pl.pgrudev.nextbike.model.Station;
 import pl.pgrudev.nextbike.model.StationDictionary;
 import pl.pgrudev.nextbike.model.Stats;
 
-import javax.inject.Named;
 import java.util.List;
 
-@Named
 public class ClientApiImpl implements ClientApi {
-    @Override
-    public String login(String login, String password) {
-        return null;
+    private SessionActor actor;
+    private static String STATUS_SUCCESS = "OK";
+    public ClientApiImpl(SessionActor actor) {
+        this.actor = actor;
     }
 
     @Override
-    public String logout() {
-        return null;
+    public String login(String login, String password) {
+        return STATUS_SUCCESS;
+    }
+
+    @Override
+    public String logout(boolean disconnect) {
+        actor.setLoggedIn(false);
+        if(disconnect) actor.self().tell(PoisonPill.getInstance(),actor.sender());
+        return STATUS_SUCCESS;
     }
 
     @Override
@@ -37,12 +45,12 @@ public class ClientApiImpl implements ClientApi {
 
     @Override
     public String addFavouriteStation(int stationId) {
-        return null;
+        return STATUS_SUCCESS;
     }
 
     @Override
     public String removeFavouriteStation(int stationId) {
-        return null;
+        return STATUS_SUCCESS;
     }
 
     @Override
@@ -56,7 +64,12 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
+    public String registerNewUser() {
+        return STATUS_SUCCESS;
+    }
+
+    @Override
     public boolean isLogged() {
-        return false;
+        return actor.isLoggedIn();
     }
 }

@@ -11,7 +11,6 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.pgrudev.client.User;
 import pl.pgrudev.repository.CustomerRepository;
 import scala.concurrent.Future;
 
@@ -23,6 +22,8 @@ public abstract class SessionActor extends AbstractActorWithStash {
     private final LoggingAdapter logger = Logging.getLogger(getContext().system(), this);
     private ChannelHandlerContext ctx;
     private Gson gson;
+    private boolean loggedIn;
+
 
     @Autowired
     private CustomerRepository repository;
@@ -51,7 +52,6 @@ public abstract class SessionActor extends AbstractActorWithStash {
                         Request request = gson.fromJson(msg, Request.class);
                         Response response = createResponse(request);
                         send(response);
-                        newFeature();
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
                     }
@@ -98,7 +98,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
         ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
-    private void newFeature(){
+    /*  private void newFeature(){
         String all ="All users: ";
         logger.debug(all);
         repository.findAll().stream().map(User::toString).forEach(logger::debug);
@@ -107,10 +107,21 @@ public abstract class SessionActor extends AbstractActorWithStash {
         logger.debug(all);
         repository.findAll().stream().map(User::toString).forEach(logger::debug);
 
-      /*  logger.info(repository.findByFirstName("Paweł").toString());
-        repository.delete(repository.findByFirstName("Paweł"));*/
+      *//*  logger.info(repository.findByFirstName("Paweł").toString());
+        repository.delete(repository.findByFirstName("Paweł"));*//*
      //   repository.deleteAll();
         System.out.println("All users: ");
         repository.findAll().stream().map(User::toString).forEach(logger::debug);
     }
+*/
+
+    public void setLoggedIn(boolean loggedIn){
+        this.loggedIn = loggedIn;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+
 }

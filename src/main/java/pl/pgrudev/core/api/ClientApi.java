@@ -1,21 +1,21 @@
 package pl.pgrudev.core.api;
 
 import pl.pgrudev.client.User;
+import pl.pgrudev.core.api.annotations.AdminCommand;
 import pl.pgrudev.core.api.annotations.LoginNotRequired;
 import pl.pgrudev.core.api.annotations.PublicApi;
 import pl.pgrudev.nextbike.model.Station;
 import pl.pgrudev.nextbike.model.StationDictionary;
 import pl.pgrudev.nextbike.model.Stats;
 
-import javax.inject.Named;
 import java.util.List;
 
 @PublicApi
-@Named
 public interface ClientApi {
+    @LoginNotRequired
     String login(String login, String password);
 
-    String logout();
+    String logout(boolean disconnect);
 
     @LoginNotRequired
     default String ping(){
@@ -35,6 +35,9 @@ public interface ClientApi {
     User getUserInfo();
 
     Stats teaserStats();
+
+    @AdminCommand
+    String registerNewUser();
 
     @LoginNotRequired
     public boolean isLogged();

@@ -32,17 +32,20 @@ public class WebSocketSessionActor extends SessionActor {
 
     private ChannelHandlerContext ctx;
     private Gson gson;
-    @Inject
+
     private ClientApi clientApiImpl;
     private List<String> loginNotRequired;
     @Inject
     private MethodsRepo methodsRepo;
     private Map<String, Method> methodsMap;
+    private List<String> adminCommands;
+    private boolean adminSession;
 
 
     public WebSocketSessionActor(ChannelHandlerContext ctx) {
         super(ctx);
         this.ctx = ctx;
+        this.clientApiImpl = new ClientApiImpl(this);
     }
 
     @Override
@@ -51,6 +54,7 @@ public class WebSocketSessionActor extends SessionActor {
         this.gson = new Gson();
         this.methodsMap = methodsRepo.getMethodsMap(ClientApi.class);
         this.loginNotRequired = methodsRepo.getLoginNotRequiredCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
+        this.adminCommands = methodsRepo.getAdminOnlyCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
         super.preStart();
     }
 
@@ -80,7 +84,7 @@ public class WebSocketSessionActor extends SessionActor {
             return Futures.failed(new IllegalAccessError("User not logged in"));
         }
 
-        if (isUserEligible()) {
+        if (isUserEligible(request)) {
             return callApi(request);
         } else {
             return Futures.failed(new IllegalAccessError("User not eligible"));
@@ -88,15 +92,13 @@ public class WebSocketSessionActor extends SessionActor {
 
     }
 
-    private boolean isUserEligible() {
-        //todo implement
-        return true;
+    private boolean isUserEligible(Request request) {
+        if(adminCommands.contains(request.getCommand().getCmd())){
+            return !adminSession;
+        }
+        else return true;
     }
 
-    private boolean isLoggedIn() {
-        //todo implement
-        return false;
-    }
 
     private boolean isLoginRequired(Request request) {
         return !loginNotRequired.contains(request.getCommand().getCmd());
@@ -107,9 +109,9 @@ public class WebSocketSessionActor extends SessionActor {
         Callable<Object> call = () -> {
             try {
                 if (null != request.getArgs()) {
-                    return method.invoke(ClientApiImpl.class.newInstance(), request.getArgs());
+                    return method.invoke(clientApiImpl, request.getArgs());
                 }
-                return method.invoke(ClientApiImpl.class.newInstance());
+                return method.invoke(clientApiImpl);
             } catch (Exception e) {
                 logger.error("Invocation Target Exception - calling api", e);
                 throw e;

@@ -19,6 +19,7 @@ public class User {
     private List<Station> favouriteStations;
     private String login;
     private String password;
+    private int userLevel;
     @CreatedDate
     private Date repositoryCreatedDate;
     @LastModifiedDate
@@ -27,10 +28,12 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName) {
+    public User(String firstName, String lastName,String login, int userLevel) {
         this.repositoryId = new ObjectId();
         this.firstName = firstName;
         this.lastName = lastName;
+        this.login = login;
+        this.userLevel = userLevel;
     }
 
     public ObjectId getId() {
@@ -97,6 +100,14 @@ public class User {
         this.password = password;
     }
 
+    public int getUserLevel() {
+        return userLevel;
+    }
+
+    public void setUserLevel(int userLevel) {
+        this.userLevel = userLevel;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -104,6 +115,7 @@ public class User {
                 ", lastName='" + lastName + '\'' +
                 ", favouriteStations=" + favouriteStations +
                 ", login='" + login + '\'' +
+                ", userLevel='" + userLevel + '\'' +
                 ", repositoryCreatedDate=" + repositoryCreatedDate +
                 ", repositoryLastModifiedDate=" + repositoryLastModifiedDate +
                 '}';
