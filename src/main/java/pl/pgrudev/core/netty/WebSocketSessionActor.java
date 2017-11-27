@@ -9,12 +9,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.annotation.Scope;
+import pl.pgrudev.client.SessionApiImpl;
 import pl.pgrudev.core.api.ClientApi;
 import pl.pgrudev.core.api.ClientApiImpl;
 import pl.pgrudev.core.api.repo.MethodsRepo;
 import pl.pgrudev.core.session.Request;
 import pl.pgrudev.core.session.Response;
 import pl.pgrudev.core.session.SessionActor;
+import pl.pgrudev.nextbike.NextBikeApiImpl;
 import scala.concurrent.Future;
 
 import javax.inject.Inject;
@@ -32,15 +34,19 @@ public class WebSocketSessionActor extends SessionActor {
 
     private ChannelHandlerContext ctx;
     private Gson gson;
-
-    private ClientApi clientApiImpl;
-    private List<String> loginNotRequired;
-    @Inject
-    private MethodsRepo methodsRepo;
-    private Map<String, Method> methodsMap;
-    private List<String> adminCommands;
     private boolean adminSession;
 
+    @Inject
+    private MethodsRepo methodsRepo;
+    private List<String> loginNotRequired;
+    private Map<String, Method> methodsMap;
+    private List<String> adminCommands;
+
+    private ClientApi clientApiImpl;
+    @Inject
+    private NextBikeApiImpl nextBikeApi;
+    @Inject
+    private SessionApiImpl sessionApi;
 
     public WebSocketSessionActor(ChannelHandlerContext ctx) {
         super(ctx);
@@ -93,10 +99,9 @@ public class WebSocketSessionActor extends SessionActor {
     }
 
     private boolean isUserEligible(Request request) {
-        if(adminCommands.contains(request.getCommand().getCmd())){
+        if (adminCommands.contains(request.getCommand().getCmd())) {
             return !adminSession;
-        }
-        else return true;
+        } else return true;
     }
 
 
