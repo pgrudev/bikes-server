@@ -5,7 +5,7 @@ import pl.pgrudev.core.api.annotations.AdminCommand;
 import pl.pgrudev.core.api.annotations.LoginNotRequired;
 import pl.pgrudev.core.api.annotations.PublicApi;
 import pl.pgrudev.nextbike.model.Station;
-import pl.pgrudev.nextbike.model.StationDictionary;
+import pl.pgrudev.nextbike.model.Dictionary;
 import pl.pgrudev.nextbike.model.Stats;
 
 import java.util.List;
@@ -26,7 +26,8 @@ public interface ClientApi {
 
     List<Station> getStations(List<Integer> stationsId);
 
-    StationDictionary getStationsDictionary();
+    @LoginNotRequired //todo remove
+    Dictionary getDictionary();
 
     String addFavouriteStation(int stationId);
 

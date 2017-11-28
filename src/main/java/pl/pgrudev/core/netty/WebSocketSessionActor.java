@@ -17,6 +17,7 @@ import pl.pgrudev.core.session.Request;
 import pl.pgrudev.core.session.Response;
 import pl.pgrudev.core.session.SessionActor;
 import pl.pgrudev.nextbike.NextBikeApiImpl;
+import pl.pgrudev.nextbike.model.Dictionary;
 import scala.concurrent.Future;
 
 import javax.inject.Inject;
@@ -47,11 +48,13 @@ public class WebSocketSessionActor extends SessionActor {
     private NextBikeApiImpl nextBikeApi;
     @Inject
     private SessionApiImpl sessionApi;
+    @Inject
+    private Dictionary dictionary;
+
 
     public WebSocketSessionActor(ChannelHandlerContext ctx) {
         super(ctx);
         this.ctx = ctx;
-        this.clientApiImpl = new ClientApiImpl(this);
     }
 
     @Override
@@ -61,6 +64,7 @@ public class WebSocketSessionActor extends SessionActor {
         this.methodsMap = methodsRepo.getMethodsMap(ClientApi.class);
         this.loginNotRequired = methodsRepo.getLoginNotRequiredCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
         this.adminCommands = methodsRepo.getAdminOnlyCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
+        this.clientApiImpl = new ClientApiImpl(this, nextBikeApi, dictionary);
         super.preStart();
     }
 

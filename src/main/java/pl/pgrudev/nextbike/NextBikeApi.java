@@ -11,8 +11,6 @@ interface NextBikeApi {
 
     Station getStation(int cityId, int stationId);
 
-    StationDictionary getStationDictionary();
-
     Stats getStats();
 
     Universe getUniverse();

@@ -3,17 +3,23 @@ package pl.pgrudev.core.api;
 import akka.actor.PoisonPill;
 import pl.pgrudev.client.User;
 import pl.pgrudev.core.session.SessionActor;
+import pl.pgrudev.nextbike.NextBikeApiImpl;
 import pl.pgrudev.nextbike.model.Station;
-import pl.pgrudev.nextbike.model.StationDictionary;
+import pl.pgrudev.nextbike.model.Dictionary;
 import pl.pgrudev.nextbike.model.Stats;
 
 import java.util.List;
 
 public class ClientApiImpl implements ClientApi {
+    private final NextBikeApiImpl nextBikeApi;
     private SessionActor actor;
     private static String STATUS_SUCCESS = "OK";
-    public ClientApiImpl(SessionActor actor) {
+    private Dictionary dictionary;
+
+    public ClientApiImpl(SessionActor actor, NextBikeApiImpl nextBikeApi, Dictionary dictionary) {
         this.actor = actor;
+        this.nextBikeApi = nextBikeApi;
+        this.dictionary = dictionary;
     }
 
     @Override
@@ -39,8 +45,8 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public StationDictionary getStationsDictionary() {
-        return null;
+    public Dictionary getDictionary() {
+        return dictionary;
     }
 
     @Override

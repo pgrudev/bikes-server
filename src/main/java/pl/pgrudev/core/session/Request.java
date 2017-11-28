@@ -2,11 +2,11 @@ package pl.pgrudev.core.session;
 
 import pl.pgrudev.client.Command;
 
-import java.util.List;
+import java.util.Arrays;
 
 public class Request {
     private Command command;
-    private List<String> args;
+    private String[] args;
 
     public Command getCommand() {
         return command;
@@ -16,11 +16,11 @@ public class Request {
         this.command = command;
     }
 
-    public List<String> getArgs() {
+    public String[] getArgs() {
         return args;
     }
 
-    public void setArgs(List<String> args) {
+    public void setArgs(String[] args) {
         this.args = args;
     }
 
@@ -28,7 +28,7 @@ public class Request {
     public String toString() {
         return "Request{" +
                 "command=" + command +
-                ", args=" + args +
+                ", args=" + Arrays.toString(args) +
                 '}';
     }
 }

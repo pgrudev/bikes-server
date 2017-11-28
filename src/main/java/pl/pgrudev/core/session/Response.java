@@ -1,20 +1,22 @@
 package pl.pgrudev.core.session;
 
-import org.bson.types.ObjectId;
-
 public class Response {
     private final Request request;
-    private final Throwable failure;
+    private final String failure;
     private final Object response;
 
     public Response(Request req, Object response, Throwable failure) {
         this.request = req;
-        this.failure = failure;
+        if (failure != null) {
+            this.failure = failure.getMessage();
+        } else {
+            this.failure = null;
+        }
         this.response = response;
     }
 
-    public Response(Object response){
-        this.request=null;
+    public Response(Object response) {
+        this.request = null;
         this.response = response;
         this.failure = null;
     }
@@ -23,11 +25,11 @@ public class Response {
         return request;
     }
 
-    public Throwable getFailure() {
+    public String getFailure() {
         return failure;
     }
 
-    public Object getResponse(){
+    public Object getResponse() {
         return this.response;
     }
 

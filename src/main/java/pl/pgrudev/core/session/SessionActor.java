@@ -11,7 +11,7 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
-import pl.pgrudev.repository.CustomerRepository;
+import pl.pgrudev.repository.UserRepository;
 import scala.concurrent.Future;
 
 import javax.inject.Named;
@@ -26,7 +26,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
 
 
     @Autowired
-    private CustomerRepository repository;
+    private UserRepository repository;
 
     public SessionActor(ChannelHandlerContext ctx) {
         this.ctx = ctx;

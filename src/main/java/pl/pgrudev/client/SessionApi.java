@@ -16,5 +16,4 @@ public interface SessionApi {
     User getUserInfo(int userId);
 
     List<Station> getFavouriteStations(int userId);
-
 }

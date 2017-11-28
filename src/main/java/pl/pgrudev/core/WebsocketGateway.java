@@ -65,9 +65,8 @@ public final class WebsocketGateway {
     public void start() throws InterruptedException {
         try {
             ChannelFuture f1 = startServer();
-         //   ChannelFuture f2 = startTestServer();
             f1.sync();
-           // f2.sync();
+
         } catch (Exception e) {
             logger.error("Could not start server", e);
         } finally {
@@ -128,19 +127,10 @@ public final class WebsocketGateway {
             shutdownServer("the System Actor has terminated");
         });
 
-        // Start listening
         Channel channel = server.bind(port).sync().channel();
-
-
         logger.info("Netty (transport: {}) is listening on port " + port + " " + (ssl ? "with" : "without")
                         + " SSL (" + (ssl ? "https" : "http") + "://127.0.0.1:" + port + path + ")",
                 () -> parentGroup.getClass().getSimpleName());
-            /*logger.info("Tester is listening on port " + testPort + " " + (ssl ? "with" : "without") + " SSL (" + (
-                    ssl ?
-                            "https" :
-                            "http") + "://127.0.0.1:" + testPort + ")");
-        }*/
-
         return channel.closeFuture();
     }
 

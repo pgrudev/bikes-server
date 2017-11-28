@@ -6,6 +6,10 @@ import javax.inject.Named;
 
 @Named
 public class NextBikeApiImpl implements NextBikeApi {
+    private Universe universe = Connector.downloadNewData();
+
+    public NextBikeApiImpl(){}
+
     @Override
     public Bike getBike(int bikeId) {
         return null;
@@ -26,18 +30,18 @@ public class NextBikeApiImpl implements NextBikeApi {
         return null;
     }
 
-    @Override
-    public StationDictionary getStationDictionary() {
-        return null;
-    }
+   /* @Override //todo redundant? - getUniverse
+    public Dictionary getStationDictionary() {
+        return null; //kept in memory, loaded on startup, optional - reset by jmx bean
+    }*/
 
     @Override
     public Stats getStats() {
-        return null;
+        return null; //dunno yet
     }
 
     @Override
     public Universe getUniverse() {
-        return null;
+        return universe;
     }
 }
