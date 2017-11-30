@@ -1,14 +1,13 @@
 package pl.pgrudev.nextbike.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
+import java.util.List;
 
 @XmlRootElement(name = "place")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Station {
-
+public class Station extends TransferClass {
+    @XmlElement(name = "bike")
+    private List<Bike> bikes;
     @XmlAttribute(name = "uid")
     private int stationId;
     @XmlAttribute(name = "lat")
@@ -21,8 +20,8 @@ public class Station {
     private int spot;
     @XmlAttribute(name = "number")
     private int number;
-    @XmlAttribute(name = "bikes")
-    private int bikes;
+    @XmlAttribute(name = "bikesNo")
+    private int bikesNo;
     @XmlAttribute(name = "bike_racks")
     private int bikeRacks;
     @XmlAttribute(name = "terminal_type")
@@ -80,12 +79,12 @@ public class Station {
         this.number = number;
     }
 
-    public int getBikes() {
-        return bikes;
+    public int getBikesNo() {
+        return bikesNo;
     }
 
-    public void setBikes(int bikes) {
-        this.bikes = bikes;
+    public void setBikesNo(int bikesNo) {
+        this.bikesNo = bikesNo;
     }
 
     public int getBikeRacks() {
@@ -118,5 +117,13 @@ public class Station {
 
     public void setBikeType(String bikeType) {
         this.bikeType = bikeType;
+    }
+
+    public List<Bike> getBikes() {
+        return bikes;
+    }
+
+    public void setBikes(List<Bike> bikes) {
+        this.bikes = bikes;
     }
 }

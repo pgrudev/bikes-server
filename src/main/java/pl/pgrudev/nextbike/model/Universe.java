@@ -8,7 +8,7 @@ import java.util.List;
 
 @XmlRootElement(name = "markers")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Universe {
+public class Universe extends TransferClass {
     @XmlElement(name = "country")
     private List<Country> countries;
 

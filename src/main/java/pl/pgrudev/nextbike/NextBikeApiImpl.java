@@ -6,9 +6,9 @@ import javax.inject.Named;
 
 @Named
 public class NextBikeApiImpl implements NextBikeApi {
-    private Universe universe = Connector.downloadNewData();
+    private Universe universe = Connector.downloadNewData(Connector.Type.UNIVERSE, "");
 
-    public NextBikeApiImpl(){}
+    //public NextBikeApiImpl(){}
 
     @Override
     public Bike getBike(int bikeId) {
@@ -17,17 +17,17 @@ public class NextBikeApiImpl implements NextBikeApi {
 
     @Override
     public City getCity(int cityId) {
-        return null;
+        return Connector.downloadNewData(Connector.Type.CITY, String.valueOf(cityId));
     }
 
     @Override
-    public Country getCountry(int countryId) {
-        return null;
+    public Country getCountry(String domain) {
+        return Connector.downloadNewData(Connector.Type.COUNTRY, domain);
     }
 
     @Override
     public Station getStation(int cityId, int stationId) {
-        return null;
+        return Connector.downloadNewData(Connector.Type.STATION, String.valueOf(stationId));
     }
 
    /* @Override //todo redundant? - getUniverse

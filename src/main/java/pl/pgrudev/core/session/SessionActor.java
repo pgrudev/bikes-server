@@ -40,6 +40,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
     public void preStart() throws Exception {
         logger.debug("Actor starting");
         this.gson = new Gson();
+
         super.preStart();
     }
 
@@ -95,7 +96,7 @@ public abstract class SessionActor extends AbstractActorWithStash {
     }
 
     public void send(Response response) {
-        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
+       ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
     /*  private void newFeature(){

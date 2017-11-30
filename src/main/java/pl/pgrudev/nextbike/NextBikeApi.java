@@ -7,7 +7,7 @@ interface NextBikeApi {
 
     City getCity(int cityId);
 
-    Country getCountry(int countryId);
+    Country getCountry(String domain);
 
     Station getStation(int cityId, int stationId);
 

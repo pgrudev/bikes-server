@@ -5,9 +5,9 @@ import java.util.List;
 
 @XmlRootElement(name = "city")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class City {
+public class City extends TransferClass {
 
-    @XmlElement(name="place")
+    @XmlElement(name = "place")
     private List<Station> stations;
     @XmlAttribute(name = "uid")
     private int cityId;
@@ -17,7 +17,7 @@ public class City {
     private double lng;
     @XmlAttribute(name = "zoom")
     private int zoom;
-    @XmlAttribute(name="maps_icon")
+    @XmlAttribute(name = "maps_icon")
     private String mapsIcon;
     @XmlAttribute(name = "alias")
     private String alias;
@@ -25,9 +25,9 @@ public class City {
     private int available;
     @XmlAttribute(name = "name")
     private String name;
-    @XmlAttribute(name="num_places")
+    @XmlAttribute(name = "num_places")
     private int numPlaces;
-    @XmlAttribute(name="refresh_rate")
+    @XmlAttribute(name = "refresh_rate")
     private int refreshRate;
     @XmlAttribute
     private String bounds;

@@ -75,6 +75,7 @@ public class WebSocketSessionActor extends SessionActor {
                     logger.info("Received message: " + msg);
                     try {
                         Request request = gson.fromJson(msg, Request.class);
+                        parsePrimitives(request);
                         response(handleRequest(request), request);
                     } catch (JsonSyntaxException e) {
                         logger.warning("Error in parsing message: " + msg);
@@ -82,6 +83,21 @@ public class WebSocketSessionActor extends SessionActor {
                 })
                 .match(Response.class, this::send)
                 .build();
+    }
+
+    private void parsePrimitives(Request request) {
+        if (null != request.getArgs()) {
+            Object[] args = request.getArgs();
+            for (int i = 0; i < args.length; i++) {
+                Object arg = args[i];
+                if(arg instanceof Double) {
+                    Integer value = ((Double) arg).intValue();
+                    if (value == ((Double) arg).doubleValue()) {
+                      args[i] = value;
+                    }
+                }
+            }
+        }
     }
 
     @Override

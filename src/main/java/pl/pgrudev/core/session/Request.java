@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class Request {
     private Command command;
-    private String[] args;
+    private Object[] args;
 
     public Command getCommand() {
         return command;
@@ -16,7 +16,7 @@ public class Request {
         this.command = command;
     }
 
-    public String[] getArgs() {
+    public Object[] getArgs() {
         return args;
     }
 

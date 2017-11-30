@@ -5,7 +5,7 @@ import java.util.List;
 
 @XmlRootElement(name = "country")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class Country {
+public class Country extends TransferClass {
 
     @XmlElement(name = "city")
     private List<City> cityList;
