@@ -1,4 +1,4 @@
 package pl.pgrudev.nextbike.model;
 
-public class TransferClass {
+public abstract class TransferClass {
 }

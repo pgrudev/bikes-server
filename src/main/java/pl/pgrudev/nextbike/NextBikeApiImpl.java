@@ -3,6 +3,8 @@ package pl.pgrudev.nextbike;
 import pl.pgrudev.nextbike.model.*;
 
 import javax.inject.Named;
+import java.util.ArrayList;
+import java.util.List;
 
 @Named
 public class NextBikeApiImpl implements NextBikeApi {
@@ -21,8 +23,12 @@ public class NextBikeApiImpl implements NextBikeApi {
     }
 
     @Override
-    public Country getCountry(String domain) {
-        return Connector.downloadNewData(Connector.Type.COUNTRY, domain);
+    public List<Country> getCountry(String domain) {
+        Universe universeCountry = Connector.downloadNewData(Connector.Type.COUNTRY, domain);
+        if (universeCountry != null) {
+            return universeCountry.getCountries();
+        }
+        return new ArrayList<>();
     }
 
     @Override

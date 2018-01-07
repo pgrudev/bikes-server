@@ -1,38 +1,36 @@
 package pl.pgrudev.nextbike.model;
 
-import javax.xml.bind.annotation.*;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-@XmlRootElement(name = "country")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Country extends TransferClass {
-
-    @XmlElement(name = "city")
+    @SerializedName("cities")
     private List<City> cityList;
-    @XmlAttribute(name = "lat")
+    @SerializedName("lat")
     private double lat;
-    @XmlAttribute(name = "lng")
+    @SerializedName("lng")
     private double lng;
-    @XmlAttribute(name = "zoom")
+    @SerializedName("zoom")
     private int zoom;
-    @XmlAttribute(name = "name")
+    @SerializedName("name")
     private String name;
-    @XmlAttribute(name = "hotline")
+    @SerializedName("hotline")
     private String hotline;
-    @XmlAttribute(name = "domain")
+    @SerializedName("domain")
     private String domain;
-    @XmlAttribute(name = "country")
+    @SerializedName("country")
     private String country;
-    @XmlAttribute(name = "country_name")
+    @SerializedName("country_name")
     private String countryName;
-    @XmlAttribute(name = "terms")
+    @SerializedName("terms")
     private String terms;
-    @XmlAttribute(name = "policy")
+    @SerializedName("policy")
     private String policy;
-    @XmlAttribute(name = "website")
+    @SerializedName("website")
     private String website;
-    @XmlAttribute(name = "show_free_racks")
-    private int showFreeRacks;
+    @SerializedName("show_free_racks")
+    private boolean showFreeRacks;
 
 
     public List<City> getCityList() {
@@ -131,11 +129,11 @@ public class Country extends TransferClass {
         this.website = website;
     }
 
-    public int getShowFreeRacks() {
+    public boolean getShowFreeRacks() {
         return showFreeRacks;
     }
 
-    public void setShowFreeRacks(int showFreeRacks) {
+    public void setShowFreeRacks(boolean showFreeRacks) {
         this.showFreeRacks = showFreeRacks;
     }
 }

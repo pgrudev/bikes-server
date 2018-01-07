@@ -1,35 +1,41 @@
 package pl.pgrudev.nextbike.model;
 
-import javax.xml.bind.annotation.*;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
-@XmlRootElement(name = "place")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Station extends TransferClass {
-    @XmlElement(name = "bike")
+    @SerializedName("bike_list")
     private List<Bike> bikes;
-    @XmlAttribute(name = "uid")
+    @SerializedName("uid")
     private int stationId;
-    @XmlAttribute(name = "lat")
+    @SerializedName("lat")
     private double lat;
-    @XmlAttribute(name = "lng")
+    @SerializedName("lng")
     private double lng;
-    @XmlAttribute(name = "name")
+    @SerializedName("name")
     private String name;
-    @XmlAttribute(name = "spot")
-    private int spot;
-    @XmlAttribute(name = "number")
+    @SerializedName("spot")
+    private boolean spot;
+    @SerializedName("number")
     private int number;
-    @XmlAttribute(name = "bikesNo")
+    @SerializedName("bikes")
     private int bikesNo;
-    @XmlAttribute(name = "bike_racks")
+    @SerializedName("bike_racks")
     private int bikeRacks;
-    @XmlAttribute(name = "terminal_type")
+    @SerializedName("free_racks")
+    private int freeRacks;
+    @SerializedName("maintenance")
+    private boolean maintenance;
+    @SerializedName("terminal_type")
     private String terminalType;
-    @XmlAttribute(name = "bike_numbers")
-    private String bikeNumbers;
-    @XmlAttribute(name = "bike_types")
-    private String bikeType;
+    @SerializedName("bike_numbers")
+    private transient String bikeNumbers;
+    @SerializedName("bike_types")
+    private transient Object bikeType;
+
+    @SerializedName("rack_locks")
+    private boolean rackLocks;
 
     public int getStationId() {
         return stationId;
@@ -63,12 +69,8 @@ public class Station extends TransferClass {
         this.name = name;
     }
 
-    public int getSpot() {
+    public boolean getSpot() {
         return spot;
-    }
-
-    public void setSpot(int spot) {
-        this.spot = spot;
     }
 
     public int getNumber() {
@@ -112,7 +114,7 @@ public class Station extends TransferClass {
     }
 
     public String getBikeType() {
-        return bikeType;
+        return (String) bikeType;
     }
 
     public void setBikeType(String bikeType) {
@@ -125,5 +127,37 @@ public class Station extends TransferClass {
 
     public void setBikes(List<Bike> bikes) {
         this.bikes = bikes;
+    }
+
+    public boolean isSpot() {
+        return spot;
+    }
+
+    public void setSpot(boolean spot) {
+        this.spot = spot;
+    }
+
+    public int getFreeRacks() {
+        return freeRacks;
+    }
+
+    public void setFreeRacks(int freeRacks) {
+        this.freeRacks = freeRacks;
+    }
+
+    public boolean isMaintenance() {
+        return maintenance;
+    }
+
+    public void setMaintenance(boolean maintenance) {
+        this.maintenance = maintenance;
+    }
+
+    public boolean isRackLocks() {
+        return rackLocks;
+    }
+
+    public void setRackLocks(boolean rackLocks) {
+        this.rackLocks = rackLocks;
     }
 }

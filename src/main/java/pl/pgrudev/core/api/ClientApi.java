@@ -30,7 +30,7 @@ public interface ClientApi {
     @LoginNotRequired //todo remove
     List<Bike> getAllBikesForStation(int cityId, int stationId);
     @LoginNotRequired //todo remove
-    Country getCountry(String domain);
+    List<Country> getCountry(String domain);
     @LoginNotRequired //todo remove
     Dictionary getDictionary();
 

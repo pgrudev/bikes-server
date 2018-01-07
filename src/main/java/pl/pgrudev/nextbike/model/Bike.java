@@ -1,20 +1,15 @@
 package pl.pgrudev.nextbike.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
+import com.google.gson.annotations.SerializedName;
 
-@XmlRootElement(name = "bike")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Bike extends TransferClass {
-    @XmlAttribute(name = "number")
+    @SerializedName("number")
     private int bikeId;
-    @XmlAttribute(name = "bike_type")
+    @SerializedName("bike_type")
     private int type;
-    @XmlAttribute(name = "active")
-    private int active;
-    @XmlAttribute(name = "state")
+    @SerializedName("active")
+    private boolean active;
+    @SerializedName("state")
     private String state;
 
     public int getBikeId() {
@@ -33,11 +28,11 @@ public class Bike extends TransferClass {
         this.type = type;
     }
 
-    public int isActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(int active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

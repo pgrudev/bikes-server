@@ -2,12 +2,14 @@ package pl.pgrudev.nextbike;
 
 import pl.pgrudev.nextbike.model.*;
 
+import java.util.List;
+
 interface NextBikeApi {
     Bike getBike(int bikeId);
 
     City getCity(int cityId);
 
-    Country getCountry(String domain);
+    List<Country> getCountry(String domain);
 
     Station getStation(int cityId, int stationId);
 

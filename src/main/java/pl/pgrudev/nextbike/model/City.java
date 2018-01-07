@@ -1,36 +1,36 @@
 package pl.pgrudev.nextbike.model;
 
-import javax.xml.bind.annotation.*;
+import com.google.gson.annotations.SerializedName;
+import pl.pgrudev.nextbike.model.Bounds.Bound;
+
 import java.util.List;
 
-@XmlRootElement(name = "city")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class City extends TransferClass {
 
-    @XmlElement(name = "place")
+    @SerializedName("places")
     private List<Station> stations;
-    @XmlAttribute(name = "uid")
+    @SerializedName("uid")
     private int cityId;
-    @XmlAttribute(name = "lat")
+    @SerializedName("lat")
     private double lat;
-    @XmlAttribute(name = "lng")
+    @SerializedName("lng")
     private double lng;
-    @XmlAttribute(name = "zoom")
+    @SerializedName("zoom")
     private int zoom;
-    @XmlAttribute(name = "maps_icon")
+    @SerializedName("maps_icon")
     private String mapsIcon;
-    @XmlAttribute(name = "alias")
+    @SerializedName("alias")
     private String alias;
-    @XmlAttribute(name = "break")
-    private int available;
-    @XmlAttribute(name = "name")
+    @SerializedName("break")
+    private boolean available;
+    @SerializedName("name")
     private String name;
-    @XmlAttribute(name = "num_places")
+    @SerializedName("num_places")
     private int numPlaces;
-    @XmlAttribute(name = "refresh_rate")
+    @SerializedName("refresh_rate")
     private int refreshRate;
-    @XmlAttribute
-    private String bounds;
+    @SerializedName("bounds")
+    private Bound bounds;
 
 
     public int getCityId() {
@@ -89,11 +89,11 @@ public class City extends TransferClass {
         this.alias = alias;
     }
 
-    public int getAvailable() {
+    public boolean getAvailable() {
         return available;
     }
 
-    public void setAvailable(int available) {
+    public void setAvailable(boolean available) {
         this.available = available;
     }
 
@@ -121,11 +121,11 @@ public class City extends TransferClass {
         this.refreshRate = refreshRate;
     }
 
-    public String getBounds() {
+    public Bound getBounds() {
         return bounds;
     }
 
-    public void setBounds(String bounds) {
+    public void setBounds(Bound bounds) {
         this.bounds = bounds;
     }
 }

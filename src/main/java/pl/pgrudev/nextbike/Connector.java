@@ -1,15 +1,14 @@
 package pl.pgrudev.nextbike;
 
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pl.pgrudev.nextbike.model.*;
+import pl.pgrudev.nextbike.model.TransferClass;
+import pl.pgrudev.nextbike.model.Universe;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.transform.stream.StreamSource;
-import java.net.MalformedURLException;
+import java.io.*;
 import java.net.URL;
+import java.util.stream.Collectors;
 
 public class Connector {
     private final static Logger logger = LogManager.getLogger(Connector.class);
@@ -17,35 +16,40 @@ public class Connector {
     public static <T extends TransferClass> T downloadNewData(Type type, String param) {
         switch (type) {
             case UNIVERSE:
-                return download(Universe.class, "", param);
+                return (T) download("", param);
             case CITY:
-                return download(City.class, "?city=", param);
+                Universe universeCity = download("?city=", param);
+                return (T) universeCity.getCountries().get(0).getCityList().get(0);
             case STATION:
-                return download(Station.class, "?place=", param);
+                Universe universeStation = download("?place=", param);
+                return (T) universeStation.getCountries().get(0).getCityList().get(0).getStations().get(0);
             case COUNTRY:
-                return download(Country.class, "?domains=", param);
+                Universe universeCountry = download("?countries=", param);
+                return (T) universeCountry;
             default:
                 return null;
         }
     }
 
-    private static <T extends TransferClass> T download(Class classType, String suffix, String param) {
-        T result = null;
+    private static Universe download(String suffix, String param) {
+        Universe result = null;
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             //todo put in properties file
-
-            // URL url = (new File("C:\\Users\\Paweł\\Desktop\\nextbike-official.xml").toURI().toURL());
-
-            URL url = new URL("https://nextbike.net/maps/nextbike-official.xml" + suffix + param);
             logger.debug("Bikes data downloading");
-            result = (T) unmarshaller.unmarshal(url);
+            //URL url = new URL("https://nextbike.net/maps/nextbike-official.json" + suffix + param);
+            File local = new File("C:\\Users\\Paweł\\Desktop\\nextbike-official.json");
+            URL url = new URL(local.toURI().toURL().toString() + suffix + param);
+            InputStream input = url.openStream();
+            String inputString = new BufferedReader(new InputStreamReader(input))
+                    .lines().collect(Collectors.joining("\n"));
+            Gson gson = new Gson();
+            result = gson.fromJson(inputString, Universe.class);
             logger.info("Bikes data downloaded");
 
-        } catch (JAXBException | MalformedURLException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 

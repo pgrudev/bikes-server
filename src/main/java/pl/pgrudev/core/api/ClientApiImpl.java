@@ -60,7 +60,7 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public Country getCountry(String domain) {
+    public List<Country> getCountry(String domain) {
         return nextBikeApi.getCountry(domain);
     }
 
