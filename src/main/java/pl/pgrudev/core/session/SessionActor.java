@@ -11,6 +11,7 @@ import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import org.springframework.beans.factory.annotation.Autowired;
+import pl.pgrudev.client.User;
 import pl.pgrudev.repository.UserRepository;
 import scala.concurrent.Future;
 
@@ -23,6 +24,8 @@ public abstract class SessionActor extends AbstractActorWithStash {
     private ChannelHandlerContext ctx;
     private Gson gson;
     private boolean loggedIn;
+    private String login;
+    private User user;
 
 
     @Autowired
@@ -116,13 +119,27 @@ public abstract class SessionActor extends AbstractActorWithStash {
     }
 */
 
-    public void setLoggedIn(boolean loggedIn){
-        this.loggedIn = loggedIn;
-    }
-
     public boolean isLoggedIn() {
         return loggedIn;
     }
 
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
+    }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

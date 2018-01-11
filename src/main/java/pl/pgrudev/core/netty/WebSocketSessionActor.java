@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.mongodb.core.index.Indexed;
 import pl.pgrudev.client.SessionApiImpl;
 import pl.pgrudev.core.api.ClientApi;
 import pl.pgrudev.core.api.ClientApiImpl;
@@ -18,6 +19,7 @@ import pl.pgrudev.core.session.Response;
 import pl.pgrudev.core.session.SessionActor;
 import pl.pgrudev.nextbike.NextBikeApiImpl;
 import pl.pgrudev.nextbike.model.Dictionary;
+import pl.pgrudev.repository.UserRepository;
 import scala.concurrent.Future;
 
 import javax.inject.Inject;
@@ -50,6 +52,8 @@ public class WebSocketSessionActor extends SessionActor {
     private SessionApiImpl sessionApi;
     @Inject
     private Dictionary dictionary;
+    @Inject
+    private UserRepository userRepository;
 
 
     public WebSocketSessionActor(ChannelHandlerContext ctx) {
@@ -64,7 +68,7 @@ public class WebSocketSessionActor extends SessionActor {
         this.methodsMap = methodsRepo.getMethodsMap(ClientApi.class);
         this.loginNotRequired = methodsRepo.getLoginNotRequiredCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
         this.adminCommands = methodsRepo.getAdminOnlyCommands(ClientApi.class).stream().map(Method::getName).collect(Collectors.toList());
-        this.clientApiImpl = new ClientApiImpl(this, nextBikeApi, dictionary);
+        this.clientApiImpl = new ClientApiImpl(this, nextBikeApi, dictionary, userRepository);
         super.preStart();
     }
 

@@ -43,10 +43,13 @@ public interface ClientApi {
     Stats teaserStats();
 
     @AdminCommand
-    String registerNewUser();
+    String registerNewUser(String firstName, String lastName,String login, int userLevel);
+
+    @AdminCommand
+    User checkUserInfo(String login);
 
     @LoginNotRequired
-     boolean isLogged();
+     boolean isLoggedIn();
 
     @LoginNotRequired
     List<String> getCommands();
