@@ -94,11 +94,13 @@ public class ClientApiImpl implements ClientApi {
 
     @Override
     public String addFavouriteStation(int stationId) {
+        actor.getUser().addFavouriteStation(stationId);
         return STATUS_SUCCESS;
     }
 
     @Override
     public String removeFavouriteStation(int stationId) {
+        actor.getUser().removeFavouriteStation(stationId);
         return STATUS_SUCCESS;
     }
 

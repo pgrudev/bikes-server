@@ -13,25 +13,23 @@ public interface ClientApi {
     @LoginNotRequired
     String login(String login, String password);
 
-    @LoginNotRequired //todo remove
     String logout(boolean disconnect);
 
     @LoginNotRequired
-    default String ping(){
+    default String ping() {
         return "pong";
     }
 
-    @LoginNotRequired //todo remove
     Station getStation(Integer cityId, Integer stationId);
-    @LoginNotRequired //todo remove
+
     List<Station> getStations(Integer cityId, List<Integer> stationsId);
-    @LoginNotRequired //todo remove
+
     List<Station> getAllStationsForCity(int cityId);
-    @LoginNotRequired //todo remove
+
     List<Bike> getAllBikesForStation(int cityId, int stationId);
-    @LoginNotRequired //todo remove
+
     List<Country> getCountry(String domain);
-    @LoginNotRequired //todo remove
+
     Dictionary getDictionary();
 
     String addFavouriteStation(int stationId);
@@ -43,13 +41,13 @@ public interface ClientApi {
     Stats teaserStats();
 
     @AdminCommand
-    String registerNewUser(String firstName, String lastName,String login, int userLevel);
+    String registerNewUser(String firstName, String lastName, String login, int userLevel);
 
     @AdminCommand
     User checkUserInfo(String login);
 
     @LoginNotRequired
-     boolean isLoggedIn();
+    boolean isLoggedIn();
 
     @LoginNotRequired
     List<String> getCommands();

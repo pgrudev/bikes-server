@@ -10,8 +10,6 @@ import java.util.List;
 public class NextBikeApiImpl implements NextBikeApi {
     private Universe universe = Connector.downloadNewData(Connector.Type.UNIVERSE, "");
 
-    //public NextBikeApiImpl(){}
-
     @Override
     public Bike getBike(int bikeId) {
         return null;

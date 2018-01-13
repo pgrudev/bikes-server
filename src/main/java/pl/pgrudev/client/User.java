@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import pl.pgrudev.nextbike.model.Station;
 
 import java.util.Date;
 import java.util.List;
@@ -17,7 +16,7 @@ public class User {
     private ObjectId repositoryId;
     private String firstName;
     private String lastName;
-    private List<Station> favouriteStations;
+    private List<Integer> favouriteStations;
     @Indexed(unique = true)
     private String login;
     private String password;
@@ -62,11 +61,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public List<Station> getFavouriteStations() {
+    public List<Integer> getFavouriteStations() {
         return favouriteStations;
     }
 
-    public void setFavouriteStations(List<Station> favouriteStations) {
+    public void setFavouriteStations(List<Integer> favouriteStations) {
         this.favouriteStations = favouriteStations;
     }
 
@@ -108,6 +107,16 @@ public class User {
 
     public void setUserLevel(int userLevel) {
         this.userLevel = userLevel;
+    }
+
+    public void addFavouriteStation(Integer stationId) {
+        this.favouriteStations.add(stationId);
+    }
+
+    public void removeFavouriteStation(Integer stationId) {
+        if (favouriteStations.contains(stationId)) {
+            this.favouriteStations.remove(stationId);
+        }
     }
 
     @Override
