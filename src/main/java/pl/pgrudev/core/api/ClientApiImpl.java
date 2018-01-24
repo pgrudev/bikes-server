@@ -1,6 +1,8 @@
 package pl.pgrudev.core.api;
 
 import akka.actor.PoisonPill;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import pl.pgrudev.client.User;
 import pl.pgrudev.core.api.annotations.AdminCommand;
 import pl.pgrudev.core.session.SessionActor;
@@ -15,8 +17,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ClientApiImpl implements ClientApi {
+
+    private static final Logger logger = LogManager.getLogger(ClientApi.class);
     private static String STATUS_SUCCESS = "OK";
-    private static String STATUS_FAILED = "failure";
+    private static String STATUS_FAILED = "Failure";
     private static int USER_ADMIN_LEVEL = 1;
     private final NextBikeApiImpl nextBikeApi;
     private SessionActor actor;
@@ -33,7 +37,9 @@ public class ClientApiImpl implements ClientApi {
     @Override
     public String login(String login, String password) {
         User user = userRepository.findByLogin(login);
-        if(user == null ){
+        //todo hashing password goes here
+        if (user == null) {
+            logger.debug("User not found: " + login);
             return STATUS_FAILED;
         }
         String userLogin = user.getLogin();
@@ -42,17 +48,15 @@ public class ClientApiImpl implements ClientApi {
                 actor.setLoggedIn(true);
                 actor.setLogin(login);
                 actor.setUser(user);
+                logger.info("User: {} logged in, user details: ", userLogin, user);
             }
         }
         return STATUS_SUCCESS;
     }
 
-    private boolean passwordValid(String login, String password) {
-        return userRepository.findByLogin(login).getPassword().equals(password);
-    }
-
     @Override
     public String logout(boolean disconnect) {
+        logger.debug("Logging out user: {}", actor.getUser().getLogin());
         actor.setLoggedIn(false);
         actor.setUser(null);
         actor.setLogin(null);
@@ -94,12 +98,14 @@ public class ClientApiImpl implements ClientApi {
 
     @Override
     public String addFavouriteStation(int stationId) {
+        logger.info("Adding new favourite station: {} for user: {}", stationId, actor.getUser().getLogin());
         actor.getUser().addFavouriteStation(stationId);
         return STATUS_SUCCESS;
     }
 
     @Override
     public String removeFavouriteStation(int stationId) {
+        logger.info("Removing favourite station (if exists): {} for user: {}", stationId, actor.getUser().getLogin());
         actor.getUser().removeFavouriteStation(stationId);
         return STATUS_SUCCESS;
     }
@@ -118,18 +124,20 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public String registerNewUser(String firstName, String lastName, String login, int userLevel) {
+    public String registerNewUser(String firstName, String lastName, String login, String password, int userLevel) {
         if (isLoggedIn() && isAdmin()) {
-            userRepository.save(new User(firstName, lastName, login, userLevel));
+            User newUser = new User(firstName, lastName, login, password, userLevel);
+            logger.info("Registering new user: " + newUser);
+            userRepository.save(new User(firstName, lastName, login, password, userLevel));
         }
         return STATUS_SUCCESS;
     }
 
     @Override
     public User checkUserInfo(String login) {
-        User user = new User();
+        User user = null;
         if (isLoggedIn() && isAdmin()) {
-            user = actor.getUser();
+            user = userRepository.findByLogin(login);
         }
         return user;
     }
@@ -152,7 +160,21 @@ public class ClientApiImpl implements ClientApi {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Station> getFavouriteStations() {
+        List<Integer> favouriteStationsId = actor.getUser().getFavouriteStations();
+        return favouriteStationsId.stream()
+                .parallel()
+                .map(id -> nextBikeApi.getStation(0, id))
+                .collect(Collectors.toList());
+    }
+
     private boolean isAdmin() {
         return userRepository.findByLogin(actor.getLogin()).getUserLevel() == USER_ADMIN_LEVEL;
     }
+
+    private boolean passwordValid(String login, String password) {
+        return userRepository.findByLogin(login).getPassword().equals(password);
+    }
+
 }

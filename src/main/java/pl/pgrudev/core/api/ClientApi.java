@@ -41,7 +41,7 @@ public interface ClientApi {
     Stats teaserStats();
 
     @AdminCommand
-    String registerNewUser(String firstName, String lastName, String login, int userLevel);
+    String registerNewUser(String firstName, String lastName, String login, String password, int userLevel);
 
     @AdminCommand
     User checkUserInfo(String login);
@@ -51,4 +51,6 @@ public interface ClientApi {
 
     @LoginNotRequired
     List<String> getCommands();
+
+    List<Station> getFavouriteStations();
 }

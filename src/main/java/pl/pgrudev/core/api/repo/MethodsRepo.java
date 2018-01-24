@@ -27,6 +27,7 @@ public class MethodsRepo {
             findPublicApis();
             publicApis.forEach(this::findLoginNotRequiredCommands);
             publicApis.forEach(this::findAdminOnlyCommands);
+            logger.info("Registered apis: " + publicApis);
         } catch (ClassNotFoundException e) {
             logger.error(e);
         }

@@ -102,23 +102,6 @@ public abstract class SessionActor extends AbstractActorWithStash {
        ctx.channel().writeAndFlush(new TextWebSocketFrame(gson.toJson(response)));
     }
 
-    /*  private void newFeature(){
-        String all ="All users: ";
-        logger.debug(all);
-        repository.findAll().stream().map(User::toString).forEach(logger::debug);
-        repository.insert(new User("Paweł", "Grudzień"));
-
-        logger.debug(all);
-        repository.findAll().stream().map(User::toString).forEach(logger::debug);
-
-      *//*  logger.info(repository.findByFirstName("Paweł").toString());
-        repository.delete(repository.findByFirstName("Paweł"));*//*
-     //   repository.deleteAll();
-        System.out.println("All users: ");
-        repository.findAll().stream().map(User::toString).forEach(logger::debug);
-    }
-*/
-
     public boolean isLoggedIn() {
         return loggedIn;
     }

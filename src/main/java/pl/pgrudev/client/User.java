@@ -29,12 +29,16 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName,String login, int userLevel) {
+    public User(String firstName, String lastName, String login, String password, int userLevel) {
         this.repositoryId = new ObjectId();
         this.firstName = firstName;
         this.lastName = lastName;
         this.login = login;
+        this.password = password;
         this.userLevel = userLevel;
+        Date date = new Date();
+        this.repositoryCreatedDate = date;
+        this.repositoryLastModifiedDate = date;
     }
 
     public ObjectId getId() {
@@ -111,11 +115,13 @@ public class User {
 
     public void addFavouriteStation(Integer stationId) {
         this.favouriteStations.add(stationId);
+        this.repositoryLastModifiedDate = new Date();
     }
 
     public void removeFavouriteStation(Integer stationId) {
         if (favouriteStations.contains(stationId)) {
             this.favouriteStations.remove(stationId);
+            this.repositoryLastModifiedDate = new Date();
         }
     }
 

@@ -14,6 +14,7 @@ public class Connector {
     private final static Logger logger = LogManager.getLogger(Connector.class);
 
     public static <T extends TransferClass> T downloadNewData(Type type, String param) {
+        logger.info("Request downloading data for: " + type);
         switch (type) {
             case UNIVERSE:
                 return (T) download("", param);
@@ -45,11 +46,9 @@ public class Connector {
             Gson gson = new Gson();
             result = gson.fromJson(inputString, Universe.class);
             logger.info("Bikes data downloaded");
-
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IOException occurred while downloading data: " + e);
         }
-
         return result;
     }
 
