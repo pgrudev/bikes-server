@@ -3,6 +3,7 @@ package pl.pgrudev.core.api;
 import akka.actor.PoisonPill;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.pgrudev.client.User;
 import pl.pgrudev.core.api.annotations.AdminCommand;
 import pl.pgrudev.core.session.SessionActor;
@@ -10,6 +11,7 @@ import pl.pgrudev.nextbike.NextBikeApiImpl;
 import pl.pgrudev.nextbike.model.*;
 import pl.pgrudev.repository.UserRepository;
 
+import javax.inject.Inject;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +29,9 @@ public class ClientApiImpl implements ClientApi {
     private Dictionary dictionary;
     private UserRepository userRepository;
 
+    @Inject
+    private PasswordEncoder passwordEncoder;
+
     public ClientApiImpl(SessionActor actor, NextBikeApiImpl nextBikeApi, Dictionary dictionary, UserRepository userRepository) {
         this.actor = actor;
         this.nextBikeApi = nextBikeApi;
@@ -35,16 +40,15 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public String login(String login, String password) {
+    public String login(String login, String rawPassword) {
         User user = userRepository.findByLogin(login);
-        //todo hashing password goes here
         if (user == null) {
-            logger.debug("User not found: " + login);
+            logger.debug("User not found for login: " + login);
             return STATUS_FAILED;
         }
         String userLogin = user.getLogin();
         if (userLogin != null) {
-            if (passwordValid(login, password)) {
+            if (isPasswordValid(login, rawPassword)) {
                 actor.setLoggedIn(true);
                 actor.setLogin(login);
                 actor.setUser(user);
@@ -124,8 +128,9 @@ public class ClientApiImpl implements ClientApi {
     }
 
     @Override
-    public String registerNewUser(String firstName, String lastName, String login, String password, int userLevel) {
+    public String registerNewUser(String firstName, String lastName, String login, String rawPassword, int userLevel) {
         if (isLoggedIn() && isAdmin()) {
+            String password = passwordEncoder.encode(rawPassword);
             User newUser = new User(firstName, lastName, login, password, userLevel);
             logger.info("Registering new user: " + newUser);
             userRepository.save(new User(firstName, lastName, login, password, userLevel));
@@ -173,8 +178,10 @@ public class ClientApiImpl implements ClientApi {
         return userRepository.findByLogin(actor.getLogin()).getUserLevel() == USER_ADMIN_LEVEL;
     }
 
-    private boolean passwordValid(String login, String password) {
-        return userRepository.findByLogin(login).getPassword().equals(password);
+    private boolean isPasswordValid(String login, String rawPassword) {
+        String dbPassword = userRepository.findByLogin(login).getPassword();
+        return passwordEncoder.matches(rawPassword, dbPassword);
+
     }
 
 }

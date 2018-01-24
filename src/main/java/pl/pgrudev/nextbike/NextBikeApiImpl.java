@@ -34,11 +34,6 @@ public class NextBikeApiImpl implements NextBikeApi {
         return Connector.downloadNewData(Connector.Type.STATION, String.valueOf(stationId));
     }
 
-   /* @Override //todo redundant? - getUniverse
-    public Dictionary getStationDictionary() {
-        return null; //kept in memory, loaded on startup, optional - reset by jmx bean
-    }*/
-
     @Override
     public Stats getStats() {
         return null; //dunno yet

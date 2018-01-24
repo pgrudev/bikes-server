@@ -39,6 +39,7 @@ dependencies {
 
     //compile 'org.springframework.data:spring-data-mongodb:1.10.8.RELEASE'
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
+    compile 'org.springframework.security:spring-security-web:5.0.0.RELEASE'
    // compile "org.springframework:spring-beans:$springVersion"
    // compile "org.springframework:spring-core:$springVersion"
    // compile "org.springframework:spring-context:$springVersion"
