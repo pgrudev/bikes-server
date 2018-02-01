@@ -8,6 +8,11 @@ public class Request {
     private Command command;
     private Object[] args;
 
+    public Request(Command command, Object[] args) {
+        this.command = command;
+        this.args = args;
+    }
+
     public Command getCommand() {
         return command;
     }

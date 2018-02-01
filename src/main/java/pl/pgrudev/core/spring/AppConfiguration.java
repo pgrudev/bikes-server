@@ -28,10 +28,4 @@ public class AppConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-/*
-    @Bean
-    @ConditionalOnMissingBean(CustomConversions.class)
-    public CustomConversions customConversions(){
-        return new CustomConversions(null);
-    }*/
 }

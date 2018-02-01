@@ -26,14 +26,10 @@ public class SpringExtension extends AbstractExtensionId<SpringExtension.SpringE
             return Props.create(SpringActorProducer.class, applicationContext, actorBeanName);
         }
 
-            public Props props(String actorBeanName, Object... args) {
-                return (args != null && args.length > 0) ?
-                        Props.create(SpringActorProducer.class,
-                                applicationContext,
-                                actorBeanName, args) :
-                    Props.create(SpringActorProducer.class,
-                            applicationContext,
-                            actorBeanName);
+        public Props props(String actorBeanName, Object... args) {
+            return (args != null && args.length > 0) ?
+                    Props.create(SpringActorProducer.class, applicationContext, actorBeanName, args) :
+                    Props.create(SpringActorProducer.class, applicationContext, actorBeanName);
         }
     }
 }
