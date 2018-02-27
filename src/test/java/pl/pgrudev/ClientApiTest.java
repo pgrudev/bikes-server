@@ -4,41 +4,58 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.testkit.javadsl.TestKit;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import io.netty.channel.ChannelHandlerContext;
+import org.junit.Assert;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import pl.pgrudev.client.Command;
+import org.mockito.Mock;
 import pl.pgrudev.core.netty.WebSocketSessionActor;
-import pl.pgrudev.core.session.Request;
-import pl.pgrudev.core.session.Response;
+
+import static pl.pgrudev.core.spring.SpringExtension.SPRING_EXTENSION_PROVIDER;
 
 //@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ClientApiTest {
+class ClientApiTest  {
 
     static ActorSystem actorSystem;
 
-    @BeforeClass
+    @Mock
+    ChannelHandlerContext ctx;
+
+    @BeforeAll
     static void setup() {
-        actorSystem = ActorSystem.create();
+       // actorSystem = ActorSystem.create("test");
     }
 
-    @AfterClass
+    @AfterAll
     static void teardown() {
-        TestKit.shutdownActorSystem(actorSystem);
+       // TestKit.shutdownActorSystem(actorSystem);
         actorSystem = null;
     }
 
     @Test
-    void loginTest() throws Exception {
+    public void simpleTest() throws Exception {
+        Assert.assertEquals(true, true);
+    }
+
+   /* @Test
+    void actorPingTest() throws Exception {
         new TestKit(actorSystem) {{
             final Props props = Props.create(WebSocketSessionActor.class);
+
+            final ActorRef wsActor = actorSystem.actorOf(SPRING_EXTENSION_PROVIDER.get(actorSystem).props("WebsocketSessionActor", ctx));
             final ActorRef subject = actorSystem.actorOf(props);
             final TestKit probe = new TestKit(actorSystem);
             subject.tell(probe.getRef(), getRef());
             expectMsg(duration("1 second"), "done");
+            String msg = "{\n" +
+                    "\t\"command\": {\n" +
+                    "\t\t\"cmd\": \"ping\"\n" +
+                    "\t}\n" +
+                    "}";
+            wsActor.tell(msg, getRef());
             within(duration("1 second"), () -> {
-               /* subject.tell("hello", getRef());
+               *//* subject.tell("hello", getRef());
 
                 // This is a demo: would normally use expectMsgEquals().
                 // Wait time is bounded by 3-second deadline above.
@@ -48,11 +65,15 @@ class ClientApiTest {
                 expectMsg(Duration.Zero(), "world");
                 // check that the probe we injected earlier got the msg
                 probe.expectMsg(Duration.Zero(), "hello");
-                assertEquals(getRef(), probe.getLastSender());*/
+                assertEquals(getRef(), probe.getLastSender());*//*
+*//*
 
                 Request req = new Request(new Command("ping"), null);
                 String pong = "pong";
                 Response expected = new Response(req, pong, null);
+*//*
+
+                wsActor.tell(msg, getRef());
 
                 // Will wait for the rest of the 3 seconds
                 expectNoMsg();
@@ -60,5 +81,5 @@ class ClientApiTest {
             });
 
         }};
-    }
+    }*/
 }
