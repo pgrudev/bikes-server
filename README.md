@@ -15,7 +15,7 @@ Technologies used:
 ---------------
   * **akka** actors - client sessions
   * **netty** for managing web-socket connection
-  * **spring** boot** - dependency injection, configuration
+  * **spring boot** - dependency injection, configuration
   * **spring security** - implementation of encryption and decryption methods 
   * **junit** - testing 
   * **log4j2** - logging
