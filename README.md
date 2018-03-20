@@ -16,10 +16,13 @@ I've added travis CI integration for master branch, building last commit status 
 
 Technologies used:
 ---------------
+  * **java 8** development language
+  * **gradle** dependency management, builds
   * **akka** actors - client sessions
   * **netty** for managing web-socket connection
   * **spring boot** - dependency injection, configuration
   * **spring security** - implementation of encryption and decryption methods 
-  * **junit** - testing 
+  * **junit** - testing framework
   * **log4j2** - logging
+  * **gson** - json handling
  
