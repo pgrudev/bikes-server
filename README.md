@@ -12,7 +12,7 @@ All data is being downloaded from <https://www.nextbike.net/>
 This app provides json API through web socket connection.
 
 
-I've added travis CI integration build status can be found here:
+I've added Travis CI integration, build status can be found here:
  
 
  master: [![Build Status](https://travis-ci.org/pgrudev/bikes-server.svg?branch=master)](https://travis-ci.org/pgrudev/bikes-server)
