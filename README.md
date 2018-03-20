@@ -29,4 +29,5 @@ Technologies used:
   * **junit** - testing framework
   * **log4j2** - logging
   * **gson** - json handling
+  * **mongoDB** - users repository
  
